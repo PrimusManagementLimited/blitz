@@ -12,21 +12,23 @@ You are helping me install Blitz, a native macOS menu-bar speech-to-text app. Wa
 
 1. **Verify environment.** Run `sw_vers` and confirm macOS version is 14.0 or higher. Run `which xcodebuild git brew`. If `brew` is missing, tell me to install it from https://brew.sh and stop. If `xcodebuild` is missing, tell me to install full Xcode from the App Store (not just CLT) and stop.
 
-2. **Install xcodegen** if missing: `brew list xcodegen >/dev/null 2>&1 || brew install xcodegen`
+2. **Confirm Xcode.app is the active developer dir.** Run `xcode-select -p`. If it returns `/Library/Developer/CommandLineTools` (or anything that isn't an Xcode.app path), Xcode.app is installed but not selected. Detect Xcode with `ls -d /Applications/Xcode*.app 2>/dev/null | head -1` and **use the resulting path as a `DEVELOPER_DIR=...` prefix on every `xcodebuild` command in step 6** — do NOT run `sudo xcode-select -s` (that needs admin password). If no Xcode.app is found, tell me to install Xcode from the App Store and stop.
 
-3. **Clone the repo:**
+3. **Install xcodegen** if missing: `brew list xcodegen >/dev/null 2>&1 || brew install xcodegen`
+
+4. **Clone the repo:**
    ```
    cd ~/Desktop && git clone https://github.com/PrimusManagementLimited/blitz.git Blitz && cd Blitz
    ```
    If `~/Desktop/Blitz` already exists, ask me whether to back it up (rename to `Blitz-backup-<timestamp>`) or abort.
 
-4. **Get my OpenAI API key.** Ask me to paste it. **Do NOT echo the key back in chat or write it to any file.** Store it in macOS Keychain:
+5. **Get my OpenAI API key.** Ask me to paste it. **Do NOT echo the key back in chat or write it to any file.** Store it in macOS Keychain:
    ```
    security add-generic-password -s "com.elyasmirzazadeh.blitz" -a "openai" -w "<KEY>" -U
    ```
    Verify silently with `security find-generic-password -s "com.elyasmirzazadeh.blitz" -a "openai" >/dev/null && echo OK`.
 
-5. **Generate Xcode project + build (Release):**
+6. **Generate Xcode project + build (Release).** If step 2 told you to use a `DEVELOPER_DIR=...` prefix, prepend it to the `xcodebuild` command:
    ```
    cd ~/Desktop/Blitz
    xcodegen generate
@@ -35,27 +37,27 @@ You are helping me install Blitz, a native macOS menu-bar speech-to-text app. Wa
    ```
    If the build fails, show me the last 30 lines of output and stop — don't continue.
 
-6. **Install to /Applications.** Use `ditto`, NOT `cp -R` (cp -R merges into existing bundles and corrupts them):
+7. **Install to /Applications.** Use `ditto`, NOT `cp -R` (cp -R merges into existing bundles and corrupts them):
    ```
    rm -rf /Applications/Blitz.app
    ditto build/Build/Products/Release/Blitz.app /Applications/Blitz.app
    ```
 
-7. **Launch:** `open /Applications/Blitz.app`. Tell me to look for the menu-bar icon (top right of screen).
+8. **Launch:** `open /Applications/Blitz.app`. Tell me to look for the menu-bar icon (top right of screen).
 
-8. **Permissions walkthrough.** Tell me:
+9. **Permissions walkthrough.** Tell me:
    - First time I hold the hotkey, macOS will prompt for **Microphone access** — grant it.
    - Then it will prompt for **Accessibility access** (needed to send Cmd+V into other apps) — open System Settings → Privacy & Security → Accessibility and toggle Blitz on.
    - After granting Accessibility, **fully quit and relaunch** Blitz (menu-bar icon → Quit, then `open /Applications/Blitz.app` again).
 
-9. **Tell me the default hotkeys (hold to talk):**
-   - Right-Option → Exact transcription
-   - Ctrl+Opt+1 → Written style rewrite
-   - Ctrl+Opt+2 → Diplomatic rewrite ("rage mode")
-   - Ctrl+Opt+3 → Add fitting emojis
-   - All remappable in menu-bar icon → Settings.
+10. **Tell me the default hotkeys (hold to talk):**
+    - Right-Option → Exact transcription
+    - Ctrl+Opt+1 → Written style rewrite
+    - Ctrl+Opt+2 → Diplomatic rewrite ("rage mode")
+    - Ctrl+Opt+3 → Add fitting emojis
+    - All remappable in menu-bar icon → Settings.
 
-10. **Test.** Open Notes.app, focus the text area, hold Right-Option, say "hello world", release. Text should appear. If nothing happens, debug: check `log show --predicate 'process == "Blitz"' --last 2m`.
+11. **Test.** Open Notes.app, focus the text area, hold Right-Option, say "hello world", release. Text should appear. If nothing happens, debug: check `log show --predicate 'process == "Blitz"' --last 2m`.
 
 **Rules:**
 - Don't proceed past a step if it errored. Show me the error and ask what I want to do.
