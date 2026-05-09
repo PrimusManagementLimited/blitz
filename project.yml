@@ -1,0 +1,51 @@
+name: Blitz
+options:
+  bundleIdPrefix: com.elyasmirzazadeh
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGNING_ALLOWED: "NO"
+    ENABLE_HARDENED_RUNTIME: "NO"
+    DEAD_CODE_STRIPPING: "YES"
+    SWIFT_STRICT_CONCURRENCY: minimal
+
+targets:
+  Blitz:
+    type: application
+    platform: macOS
+    sources:
+      - path: Blitz
+        excludes:
+          - "Resources/Info.plist"
+          - "Resources/Blitz.entitlements"
+    resources:
+      - path: Blitz/Resources/dev.env
+        optional: true
+    info:
+      path: Blitz/Resources/Info.plist
+      properties:
+        CFBundleName: Blitz
+        CFBundleDisplayName: Blitz
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSMinimumSystemVersion: "14.0"
+        LSUIElement: true
+        NSMicrophoneUsageDescription: "Blitz records audio while you hold a hotkey so it can transcribe your speech."
+        NSAppleEventsUsageDescription: "Blitz inserts transcribed text into the frontmost application."
+        NSHighResolutionCapable: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.elyasmirzazadeh.blitz
+        GENERATE_INFOPLIST_FILE: "NO"
+        INFOPLIST_FILE: Blitz/Resources/Info.plist
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"

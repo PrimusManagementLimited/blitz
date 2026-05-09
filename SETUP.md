@@ -1,0 +1,86 @@
+# Install Blitz on Your Mac (Claude Code Bootstrap)
+
+Paste **everything below the line** into Claude Code as your first message. Claude Code will run the commands and walk you through it interactively.
+
+If you don't have Claude Code yet, scroll to the bottom — there's a 2-minute setup.
+
+---
+
+You are helping me install Blitz, a native macOS menu-bar speech-to-text app. Walk me through it interactively. Ask me one thing at a time, don't dump all commands at once. Run commands yourself via the Bash tool — don't make me copy-paste.
+
+**Plan:**
+
+1. **Verify environment.** Run `sw_vers` and confirm macOS version is 14.0 or higher. Run `which xcodebuild git brew`. If `brew` is missing, tell me to install it from https://brew.sh and stop. If `xcodebuild` is missing, tell me to install full Xcode from the App Store (not just CLT) and stop.
+
+2. **Install xcodegen** if missing: `brew list xcodegen >/dev/null 2>&1 || brew install xcodegen`
+
+3. **Clone the repo:**
+   ```
+   cd ~/Desktop && git clone https://github.com/<YOUR_USERNAME>/blitz.git Blitz && cd Blitz
+   ```
+   If `~/Desktop/Blitz` already exists, ask me whether to back it up (rename to `Blitz-backup-<timestamp>`) or abort.
+
+4. **Get my OpenAI API key.** Ask me to paste it. **Do NOT echo the key back in chat or write it to any file.** Store it in macOS Keychain:
+   ```
+   security add-generic-password -s "com.elyasmirzazadeh.blitz" -a "openai" -w "<KEY>" -U
+   ```
+   Verify silently with `security find-generic-password -s "com.elyasmirzazadeh.blitz" -a "openai" >/dev/null && echo OK`.
+
+5. **Generate Xcode project + build (Release):**
+   ```
+   cd ~/Desktop/Blitz
+   xcodegen generate
+   xcodebuild -project Blitz.xcodeproj -scheme Blitz -configuration Release \
+     -derivedDataPath build clean build
+   ```
+   If the build fails, show me the last 30 lines of output and stop — don't continue.
+
+6. **Install to /Applications.** Use `ditto`, NOT `cp -R` (cp -R merges into existing bundles and corrupts them):
+   ```
+   rm -rf /Applications/Blitz.app
+   ditto build/Build/Products/Release/Blitz.app /Applications/Blitz.app
+   ```
+
+7. **Launch:** `open /Applications/Blitz.app`. Tell me to look for the menu-bar icon (top right of screen).
+
+8. **Permissions walkthrough.** Tell me:
+   - First time I hold the hotkey, macOS will prompt for **Microphone access** — grant it.
+   - Then it will prompt for **Accessibility access** (needed to send Cmd+V into other apps) — open System Settings → Privacy & Security → Accessibility and toggle Blitz on.
+   - After granting Accessibility, **fully quit and relaunch** Blitz (menu-bar icon → Quit, then `open /Applications/Blitz.app` again).
+
+9. **Tell me the default hotkeys (hold to talk):**
+   - Right-Option → Exact transcription
+   - Ctrl+Opt+1 → Written style rewrite
+   - Ctrl+Opt+2 → Diplomatic rewrite ("rage mode")
+   - Ctrl+Opt+3 → Add fitting emojis
+   - All remappable in menu-bar icon → Settings.
+
+10. **Test.** Open Notes.app, focus the text area, hold Right-Option, say "hello world", release. Text should appear. If nothing happens, debug: check `log show --predicate 'process == "Blitz"' --last 2m`.
+
+**Rules:**
+- Don't proceed past a step if it errored. Show me the error and ask what I want to do.
+- Don't echo my API key anywhere.
+- Don't suggest `sudo` for anything except if explicitly required.
+
+Start with step 1.
+
+---
+
+## Don't have Claude Code yet?
+
+Open Terminal and run:
+
+```bash
+# 1. Install Node 18+ if missing
+brew install node
+
+# 2. Install Claude Code
+npm install -g @anthropic-ai/claude-code
+
+# 3. Start it (will walk you through login on first run)
+cd ~/Desktop && claude
+```
+
+Once you see the Claude Code prompt, paste the block above (between the two `---` lines) as your first message.
+
+Docs: https://docs.claude.com/en/docs/claude-code

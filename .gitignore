@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Build outputs
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+.build/
+
+# System
+.DS_Store
+*.swp
+
+# Generated
+Blitz.xcodeproj/
+
+# Built app bundles in repo root
+*.app
