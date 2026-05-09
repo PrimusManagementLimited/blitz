@@ -17,7 +17,7 @@ The fastest way to install Blitz is to paste [`SETUP.md`](./SETUP.md) into [Clau
 ## Manual install
 
 ```bash
-git clone https://github.com/<YOUR_USERNAME>/blitz.git ~/Desktop/Blitz
+git clone https://github.com/PrimusManagementLimited/blitz.git ~/Desktop/Blitz
 cd ~/Desktop/Blitz
 brew install xcodegen
 xcodegen generate

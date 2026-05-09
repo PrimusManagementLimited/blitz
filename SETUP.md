@@ -16,7 +16,7 @@ You are helping me install Blitz, a native macOS menu-bar speech-to-text app. Wa
 
 3. **Clone the repo:**
    ```
-   cd ~/Desktop && git clone https://github.com/<YOUR_USERNAME>/blitz.git Blitz && cd Blitz
+   cd ~/Desktop && git clone https://github.com/PrimusManagementLimited/blitz.git Blitz && cd Blitz
    ```
    If `~/Desktop/Blitz` already exists, ask me whether to back it up (rename to `Blitz-backup-<timestamp>`) or abort.
 
